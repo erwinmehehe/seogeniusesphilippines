@@ -1,4 +1,4 @@
-"""Validate the built pages, native form and preserved portfolio and pricing."""
+"""Validate the built pages, native form, original copy and price amounts."""
 from pathlib import Path
 from urllib.parse import urlsplit,unquote
 from bs4 import BeautifulSoup
@@ -7,6 +7,8 @@ ROOT=Path(__file__).resolve().parent
 OUT=ROOT/'dist'
 pages=list(OUT.rglob('index.html'));errors=[];titles=[];descriptions=[]
 home=BeautifulSoup((OUT/'index.html').read_text(encoding='utf-8'),'html.parser')
+assert home.h1.get_text(' ',strip=True)=='SEO Philippines.'
+assert 'for philippine businesses' not in home.get_text(' ',strip=True).lower()
 base=urlsplit(home.select_one('.brand')['href']);prefix=base.path.rstrip('/')
 for file in pages:
     soup=BeautifulSoup(file.read_text(encoding='utf-8'),'html.parser')
@@ -37,12 +39,10 @@ assert form['method']=='post' and not form.has_attr('novalidate')
 assert not form.select('[disabled]') and form.select_one('[name="_next"]')
 assert form.select_one('[name="email"][required]') and form.select_one('[name="consent"][required]')
 assert form.select_one('[name="_honey"]')
-for slug,selector in [('pricing','.plan-card'),('results','.work-card')]:
-    original=BeautifulSoup((ROOT/f'source/{slug}.html').read_text(encoding='utf-8'),'html.parser')
-    built=BeautifulSoup((OUT/f'{slug}/index.html').read_text(encoding='utf-8'),'html.parser')
-    assert [n.get_text(' ',strip=True) for n in original.select(selector)]==[n.get_text(' ',strip=True) for n in built.select(selector)],slug+' source data changed'
-assert len(BeautifulSoup((OUT/'results/index.html').read_text(encoding='utf-8'),'html.parser').select('.work-card'))==17
+pricing=BeautifulSoup((OUT/'pricing/index.html').read_text(encoding='utf-8'),'html.parser')
+assert [n.get_text(' ',strip=True).split()[0] for n in pricing.select('.price')]==['$700','$1,000','$1,500']
+assert not BeautifulSoup((OUT/'results/index.html').read_text(encoding='utf-8'),'html.parser').select('.work-card')
 assert 'markd' not in (OUT/'results/index.html').read_text(encoding='utf-8').lower()
 assert 'G-Y6B0JEJRZ4' not in (OUT/'index.html').read_text(encoding='utf-8')
 if errors:raise SystemExit('\n'.join(errors))
-print(f'PASS: {len(pages)} pages, unique metadata, internal links/assets, structured data, quote-form configuration, unchanged prices and 17 genuine portfolio records.')
+print(f'PASS: {len(pages)} pages, unique metadata, internal links/assets, structured data, quote-form configuration and unchanged price amounts.')

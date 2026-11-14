@@ -125,7 +125,7 @@ GUIDES = {
  ('Read the exit terms','Confirm the notice period, cancellation terms, outstanding fees and ownership of content before work begins. Keep the proposal and service agreement together so there is a clear record of what both parties accepted.')]
 },
 'local-seo-checklist-philippines': {
- 'title':'Local SEO Checklist for Philippine Businesses',
+ 'title':'Local SEO Checklist: Profiles, Pages and Enquiries',
  'intro':'Check the information customers need to find, contact and choose your business in local search.',
  'sections':[
  ('Confirm the real service area','List where you actually provide the service and whether customers visit your premises. Do not create an address or location page just to target a city. Your website and Business Profile should describe the same business.'),

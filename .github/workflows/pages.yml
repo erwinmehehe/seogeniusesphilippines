@@ -30,6 +30,7 @@ jobs:
             python build.py --base-url "$BASE_URL"
           fi
       - run: python check.py
+      - run: python originality.py
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist

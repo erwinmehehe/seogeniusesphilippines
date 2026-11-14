@@ -50,6 +50,9 @@ def page(path,title,description,body,kind='WebPage'):
     # Rewrite only actual local URL attributes, never embedded data URLs or schemas.
     markup=re.sub(r'((?:href|src|action)=["\x27])/(?!/)',lambda m:m[1]+BASE+'/',markup)
     soup=BeautifulSoup(markup,'html.parser')
+    if path=='':
+        css=soup.new_tag('link',rel='stylesheet',href=BASE+'/assets/homepage.css')
+        soup.select_one('link[rel="stylesheet"]').insert_before(css)
     for a in soup.select('nav a[href]'):
         if a['href']==BASE+link(path):a['aria-current']='page'
     out=OUT/path/'index.html';out.parent.mkdir(parents=True,exist_ok=True);out.write_text(str(soup)+'\n',encoding='utf-8')
@@ -62,7 +65,10 @@ home='''<main id="main" class="inner-design"><section class="genius-hero contain
 <section class="container genius-section"><div class="genius-intro"><h2>Know what you are paying for.</h2><div><p>Your quote sets out the work, responsibilities and delivery schedule. Tasks that need your developer or approval are identified before implementation.</p><p>Monthly starting prices are published in US dollars. The final price depends on the work agreed for your website.</p>'''+cta('View pricing','/pricing/',True)+'''</div></div></section>
 <section class="container genius-section"><h2>How the work starts</h2><div class="working-steps"><div><h3>Send your website</h3><p>Include the services you sell, target market and the problems you want addressed.</p></div><div><h3>Review the proposal</h3><p>Check the deliverables, price, access requirements and implementation responsibilities.</p></div><div><h3>Review the completed work</h3><p>See the pages and tasks completed, performance observations and remaining priorities.</p></div></div></section>
 <section class="container genius-section"><h2>Before you choose an SEO provider</h2><div class="faq-list"><details><summary>Can you guarantee a number-one ranking?</summary><p>No. Search results depend on competition, website conditions and search-engine changes. We define the work and report performance without promising a position or revenue figure.</p></details><details><summary>Do you work with small businesses?</summary><p>Send your website and the work you need. A focused project may be more appropriate than ongoing support when the requirement is limited.</p></details><details><summary>Can you help with local and ecommerce SEO?</summary><p>Yes. Local work can cover your Business Profile and service-area pages. Ecommerce work can cover category structure, product pages and technical controls. The proposal specifies what is included.</p></details><details><summary>How will I know what has changed?</summary><p>Reports identify completed tasks and affected pages. Where access is available, they can include Search Console, analytics and configured enquiry or purchase data.</p></details></div></section>'''+close()+'</main>'
-page('', 'SEO Philippines | SEO Geniuses Philippines','SEO services in the Philippines: technical SEO, local search, ecommerce, content and reporting. Review our work, compare starting prices and get a quote.',home)
+home_soup=BeautifulSoup(home,'html.parser')
+home_soup.select_one('.genius-hero').replace_with(BeautifulSoup((ROOT/'source/hero.html').read_text(encoding='utf-8'),'html.parser'))
+home_soup.main['class']=['inner-design','duplicate-home']
+page('', 'SEO Philippines | SEO Geniuses Philippines','SEO services in the Philippines: technical SEO, local search, ecommerce, content and reporting. Review our work, compare starting prices and get a quote.',str(home_soup))
 page('services','SEO Services Philippines','Explore technical, on-page, local and ecommerce SEO, keyword research, content and reporting for Philippine businesses.','<main id="main" class="inner-design">'+opening('SEO services','Choose the work your website needs, from a focused technical project to ongoing content and search support.')+'<section class="container service-catalog">'+service_rows+'</section>'+close()+'</main>')
 for slug,data in SERVICES.items():
     related=''.join(f'<p><a href="/services/{x}/">{SERVICES[x]["heading"]}</a></p>' for x in data['related'])

@@ -24,10 +24,11 @@ for variant,background,ink in [('dark','#101518','#edf0eb'),('light','#f4f5ef','
     (ROOT/f'logo-{variant}.svg').write_text(svg,encoding='utf-8')
 
 def raster_mark(size):
-    im=Image.new('RGBA',(size,size),(23,35,31,255));d=ImageDraw.Draw(im);s=size/64
+    im=Image.new('RGBA',(size,size),(0,0,0,0));d=ImageDraw.Draw(im);s=size/64
+    d.rounded_rectangle((0,0,size-1,size-1),radius=round(12*s),fill='#17231f')
     # Same open circular G and terminal used by the vector mark.
     box=tuple(round(v*s) for v in (12,12,52,52))
-    d.arc(box,start=45,end=327,fill='#e1e9e1',width=round(6*s))
+    d.arc(box,start=18,end=327,fill='#e1e9e1',width=round(6*s))
     d.line([(49*s,38*s),(49*s,32*s),(33*s,32*s)],fill='#e1e9e1',width=round(6*s))
     d.ellipse(tuple(round(v*s) for v in (45,11,53,19)),fill='#9fc7ae')
     return im
@@ -36,7 +37,7 @@ icon=raster_mark(512)
 icon.save(ROOT/'icon-512.png')
 icon.resize((180,180),Image.Resampling.LANCZOS).save(ROOT/'apple-touch-icon.png')
 icon.save(ROOT/'favicon.ico',sizes=[(16,16),(32,32),(48,48),(64,64)])
-social=Image.new('RGB',(1200,630),'#101518');social.paste(raster_mark(104),(80,78))
+social=Image.new('RGB',(1200,630),'#101518');social_icon=raster_mark(104);social.paste(social_icon,(80,78),social_icon)
 d=ImageDraw.Draw(social)
 d.text((80,240),'SEO Geniuses',font=ImageFont.truetype(str(FONT),83),fill='#edf0eb')
 d.text((84,350),'PHILIPPINES',font=ImageFont.truetype(str(FONT),29),fill='#9fc7ae')

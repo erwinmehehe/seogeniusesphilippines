@@ -24,11 +24,14 @@ jobs:
         env:
           BASE_URL: ${{ steps.pages.outputs.base_url }}
         run: |
-          if [ "$BASE_URL" = "https://seogeniusesphilippines.com" ]; then
-            python build.py --base-url "$BASE_URL" --indexable
-          else
-            python build.py --base-url "$BASE_URL"
-          fi
+          case "${BASE_URL%/}" in
+            https://seogeniusesphilippines.com|http://seogeniusesphilippines.com)
+              python build.py --indexable
+              ;;
+            *)
+              python build.py --base-url "$BASE_URL"
+              ;;
+          esac
       - run: python check.py
       - run: python originality.py
       - uses: actions/upload-pages-artifact@v4

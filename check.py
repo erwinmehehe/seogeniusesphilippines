@@ -7,7 +7,12 @@ ROOT=Path(__file__).resolve().parent
 OUT=ROOT/'dist'
 pages=list(OUT.rglob('index.html'));errors=[];titles=[];descriptions=[]
 home=BeautifulSoup((OUT/'index.html').read_text(encoding='utf-8'),'html.parser')
-assert home.h1.get_text(' ',strip=True)=='SEO Philippines.'
+assert 'SEO Philippines' in home.title.get_text()
+assert home.h1.get_text(' ',strip=True)=='Find the problem. Fix the page.'
+assert not home.select('svg.chart,.chart,.dash,.hero-agenda')
+assert 'Illustrative' not in home.main.get_text(' ',strip=True)
+assert home.select_one('.studio-hero-actions a[href$="/contact/"]')
+assert home.select_one('.studio-hero-actions a[href="https://calendly.com/discovery-call-with-erwin"]')
 assert 'for philippine businesses' not in home.get_text(' ',strip=True).lower()
 base=urlsplit(home.select_one('.brand')['href']);prefix=base.path.rstrip('/')
 for file in pages:

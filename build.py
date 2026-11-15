@@ -1,5 +1,5 @@
 """Build the independent SEO Geniuses Philippines static website."""
-import argparse, copy, html, json, re, shutil
+import argparse, copy, html, json, re, shutil, hashlib
 from pathlib import Path
 from xml.sax.saxutils import escape
 from bs4 import BeautifulSoup
@@ -51,10 +51,19 @@ def page(path,title,description,body,kind='WebPage'):
     markup=re.sub(r'((?:href|src|action)=["\x27])/(?!/)',lambda m:m[1]+BASE+'/',markup)
     soup=BeautifulSoup(markup,'html.parser')
     if path=='':
-        css=soup.new_tag('link',rel='stylesheet',href=BASE+'/assets/homepage.css')
-        soup.select_one('link[rel="stylesheet"]').insert_before(css)
+        css=soup.new_tag('link',rel='stylesheet',href=BASE+'/assets/home.css')
+        soup.head.append(css)
     for a in soup.select('nav a[href]'):
         if a['href']==BASE+link(path):a['aria-current']='page'
+    # New styles and behaviour must not depend on an older browser/CDN cache.
+    for resource in soup.select('link[rel="stylesheet"][href],script[src]'):
+        attr='href' if resource.name=='link' else 'src'
+        prefix=BASE+'/assets/'
+        if resource[attr].startswith(prefix):
+            asset=ROOT/'assets'/resource[attr][len(prefix):].split('?')[0]
+            if asset.is_file():
+                version=hashlib.sha256(asset.read_bytes()).hexdigest()[:12]
+                resource[attr]=resource[attr].split('?')[0]+'?v='+version
     out=OUT/path/'index.html';out.parent.mkdir(parents=True,exist_ok=True);out.write_text(str(soup)+'\n',encoding='utf-8')
     pages[path]=(title,description)
 

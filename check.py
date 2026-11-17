@@ -8,7 +8,7 @@ OUT=ROOT/'dist'
 pages=list(OUT.rglob('index.html'));errors=[];titles=[];descriptions=[]
 home=BeautifulSoup((OUT/'index.html').read_text(encoding='utf-8'),'html.parser')
 assert 'SEO Philippines' in home.title.get_text()
-assert home.h1.get_text(' ',strip=True)=='Find the problem. Fix the page.'
+assert home.h1.get_text(' ',strip=True)=='SEO Philippines. Work on what matters.'
 assert not home.select('svg.chart,.chart,.dash,.hero-agenda')
 assert 'Illustrative' not in home.main.get_text(' ',strip=True)
 assert home.select_one('.studio-hero-actions a[href$="/contact/"]')
@@ -51,3 +51,16 @@ assert 'markd' not in (OUT/'results/index.html').read_text(encoding='utf-8').low
 assert 'G-Y6B0JEJRZ4' not in (OUT/'index.html').read_text(encoding='utf-8')
 if errors:raise SystemExit('\n'.join(errors))
 print(f'PASS: {len(pages)} pages, unique metadata, internal links/assets, structured data, quote-form configuration and unchanged price amounts.')
+
+# Restored project evidence must remain complete and exclude the removed project.
+import json
+projects=json.loads((ROOT/'source/portfolio.json').read_text(encoding='utf-8'))
+assert len(projects)==17
+for path in ['index.html','results/index.html']:
+    soup=BeautifulSoup((ROOT/'dist'/path).read_text(encoding='utf-8'),'html.parser')
+    assert len(soup.select('.genius-project'))==17
+    assert 'markd' not in soup.select_one('main').get_text().lower()
+    for card,project in zip(soup.select('.genius-project'),projects):
+        assert card.h3.get_text()==project['name']
+        assert [[td.get_text() for td in row.select('td')] for row in card.select('tbody tr')]==project['keywords']
+print('PASS: 17 genuine portfolio records on both pages; MARKD excluded.')

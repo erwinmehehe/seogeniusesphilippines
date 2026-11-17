@@ -32,10 +32,10 @@ def editorial(sections):
 def close(heading='Put your next SEO project in writing.'):
     return '<section class="cta-band"><div class="container"><h2>'+heading+'</h2><p>Share the URL, the audience you want to reach and what needs to change. We will prepare a proposed scope.</p>'+cta()+'</div></section>'
 
-nav='<a href="/services/">Services</a><a href="/results/">Measurement</a><a href="/pricing/">Pricing</a><a href="/about/">About</a>'
+nav='<a href="/services/">Services</a><a href="/results/">Portfolio</a><a href="/pricing/">Pricing</a><a href="/about/">About</a>'
 brand='<a class="brand" aria-label="SEO Geniuses Philippines home" href="/"><img class="brand-symbol" src="/brand/mark.svg" width="42" height="42" alt=""/><span><span class="brand-name">SEO Geniuses</span><span class="brand-sub">Philippines</span></span></a>'
 header=f'<a class="skip" href="#main">Skip to content</a><header class="site-header"><div class="container header-inner">{brand}<nav class="main-nav" aria-label="Main navigation">{nav}</nav><div class="shell-actions">{cta()}<a class="btn outline" href="{CALL}" target="_blank" rel="noopener noreferrer">Book a call</a></div><button type="button" class="menu-toggle" data-menu-button aria-controls="mobile-navigation" aria-expanded="false" aria-label="Toggle navigation">Menu</button></div><nav class="mobile-nav" id="mobile-navigation" data-mobile-nav aria-label="Mobile navigation" hidden>{nav}{cta()}<a href="{CALL}" target="_blank" rel="noopener noreferrer">Book a discovery call</a></nav></header>'
-footer=f'<footer class="site-footer"><div class="container"><div class="footer-grid"><div>{brand}<p>Search strategy, website optimisation and SEO implementation from the Philippines.</p><a class="contact-email" href="mailto:{INBOX}">{INBOX}</a></div><div><h3>Services</h3><a href="/services/technical-seo/">Technical SEO</a><a href="/services/local-seo/">Local SEO</a><a href="/services/ecommerce-seo/">Ecommerce SEO</a><a href="/services/white-label-seo/">White-label SEO</a></div><div><h3>Company</h3><a href="/about/">About</a><a href="/results/">SEO measurement</a><a href="/pricing/">Pricing</a><a href="/contact/">Get a Quote</a></div><div><h3>Resources</h3><a href="/blog/">SEO guides</a><a href="/privacy-policy/">Privacy policy</a><a href="/terms-of-service/">Terms of service</a><a href="/cookie-policy/">Cookie policy</a></div></div><div class="footer-bottom"><span>© 2026 {BRAND}.</span></div></div></footer><a class="shell-fixed-call" href="{CALL}" target="_blank" rel="noopener noreferrer">Book a Discovery Call</a>'
+footer=f'<footer class="site-footer"><div class="container"><div class="footer-grid"><div>{brand}<p>Search strategy, website optimisation and SEO implementation from the Philippines.</p><a class="contact-email" href="mailto:{INBOX}">{INBOX}</a></div><div><h3>Services</h3><a href="/services/technical-seo/">Technical SEO</a><a href="/services/local-seo/">Local SEO</a><a href="/services/ecommerce-seo/">Ecommerce SEO</a><a href="/services/white-label-seo/">White-label SEO</a></div><div><h3>Company</h3><a href="/about/">About</a><a href="/results/">Portfolio</a><a href="/pricing/">Pricing</a><a href="/contact/">Get a Quote</a></div><div><h3>Resources</h3><a href="/blog/">SEO guides</a><a href="/privacy-policy/">Privacy policy</a><a href="/terms-of-service/">Terms of service</a><a href="/cookie-policy/">Cookie policy</a></div></div><div class="footer-bottom"><span>© 2026 {BRAND}.</span></div></div></footer><a class="shell-fixed-call" href="{CALL}" target="_blank" rel="noopener noreferrer">Book a Discovery Call</a>'
 pages={}
 
 def page(path,title,description,body,kind='WebPage'):
@@ -50,7 +50,7 @@ def page(path,title,description,body,kind='WebPage'):
     # Rewrite only actual local URL attributes, never embedded data URLs or schemas.
     markup=re.sub(r'((?:href|src|action)=["\x27])/(?!/)',lambda m:m[1]+BASE+'/',markup)
     soup=BeautifulSoup(markup,'html.parser')
-    if path=='':
+    if path in ('','results'):
         css=soup.new_tag('link',rel='stylesheet',href=BASE+'/assets/home.css')
         soup.head.append(css)
     for a in soup.select('nav a[href]'):
@@ -68,7 +68,18 @@ def page(path,title,description,body,kind='WebPage'):
     pages[path]=(title,description)
 
 service_rows=''.join(f'<a class="service-tile" href="/services/{slug}/"><h2>{data["heading"]}</h2><p>{data["summary"]}</p></a>' for slug,data in SERVICES.items())
-home=(ROOT/'source/home.html').read_text(encoding='utf-8').replace('{{HERO}}',(ROOT/'source/hero.html').read_text(encoding='utf-8')).replace('{{SERVICES}}',service_rows).replace('{{CLOSE}}',close())
+PROJECTS=json.loads((ROOT/'source/portfolio.json').read_text(encoding='utf-8'))
+def portfolio_cards(projects):
+    cards=[]
+    for project in projects:
+        logo=(f'<img src="{html.escape(project["logo"])}" alt="" loading="lazy" width="160" height="64"/>' if project['logo'] else '')
+        rows=''.join('<tr><td>'+html.escape(query)+'</td><td>'+html.escape(rank)+'</td></tr>' for query,rank in project['keywords'])
+        cards.append('<article class="genius-project"><div class="genius-project-logo">'+logo+'</div><h3>'+html.escape(project['name'])+'</h3><p>'+html.escape(project['market'])+'</p><details><summary>Recorded search positions</summary><table><caption class="sr-only">'+html.escape(project['name'])+' search positions</caption><thead><tr><th>Query</th><th>Position</th></tr></thead><tbody>'+rows+'</tbody></table></details></article>')
+    return '<div class="genius-project-grid">'+''.join(cards)+'</div>'
+portfolio_intro='<p class="portfolio-context">Selected websites from our SEO work across Australia and the United States. The figures below are recorded keyword positions, not traffic or revenue claims.</p>'
+portfolio_note='<p class="portfolio-date">Search positions captured on 9 November 2026, using the relevant Australian or US Google results. Rankings are historical observations and can change.</p>'
+home_portfolio='<section class="studio-wrap studio-portfolio" id="portfolio"><div class="studio-heading"><h2>Websites we’ve<br/>worked on.</h2><div>'+portfolio_intro+'<a href="/results/">Explore the portfolio</a></div></div>'+portfolio_cards(PROJECTS)+portfolio_note+'</section>'
+home=(ROOT/'source/home.html').read_text(encoding='utf-8').replace('{{HERO}}',(ROOT/'source/hero.html').read_text(encoding='utf-8')).replace('{{PORTFOLIO}}',home_portfolio).replace('{{SERVICES}}',service_rows).replace('{{CLOSE}}',close())
 page('', 'SEO Philippines | SEO Geniuses Philippines','SEO Philippines: search strategy, technical diagnosis, content planning and website implementation. Explore SEO expertise from the Philippines and request a quote.',home)
 page('services','SEO Services Philippines','Explore technical, on-page, local and ecommerce SEO, keyword research, content and reporting from the Philippines.','<main id="main" class="inner-design">'+opening('SEO services','Choose the work your website needs, from a focused technical project to ongoing content and search support.')+'<section class="container service-catalog">'+service_rows+'</section>'+close()+'</main>')
 for slug,data in SERVICES.items():
@@ -81,7 +92,7 @@ page('about','About SEO Geniuses Philippines','Learn how SEO Geniuses Philippine
 
 # Original copy for this brand; existing price amounts are retained.
 page('pricing','SEO Pricing Philippines','Review monthly SEO starting fees and the questions a project proposal should answer. USD pricing for defined research, implementation and reporting work.',(ROOT/'source/pricing-content.html').read_text(encoding='utf-8'))
-page('results','How We Assess SEO Results','How SEO Geniuses Philippines distinguishes search visibility, website visits, enquiries and business outcomes when reviewing SEO performance.',(ROOT/'source/measurement.html').read_text(encoding='utf-8'))
+page('results','SEO Project Portfolio | SEO Geniuses Philippines','Browse websites from our SEO portfolio, with recorded search queries and positions for Australian and US projects.', '<main id="main" class="portfolio-page">'+opening('SEO project portfolio', 'Explore the websites, markets and search terms in our recorded project work.')+'<section class="container">'+portfolio_intro+portfolio_cards(PROJECTS)+portfolio_note+'</section>'+close()+'</main>')
 
 contact=BeautifulSoup((ROOT/'source/contact.html').read_text(encoding='utf-8'),'html.parser').main
 contact.h1.string='Get a quote for your website.'

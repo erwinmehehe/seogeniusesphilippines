@@ -8,11 +8,13 @@ OUT=ROOT/'dist'
 pages=list(OUT.rglob('index.html'));errors=[];titles=[];descriptions=[]
 home=BeautifulSoup((OUT/'index.html').read_text(encoding='utf-8'),'html.parser')
 assert 'SEO Philippines' in home.title.get_text()
-assert home.h1.get_text(' ',strip=True)=='SEO Philippines. Work on what matters.'
-assert not home.select('svg.chart,.chart,.dash,.hero-agenda')
-assert 'Illustrative' not in home.main.get_text(' ',strip=True)
-assert home.select_one('.studio-hero-actions a[href$="/contact/"]')
-assert home.select_one('.studio-hero-actions a[href="https://calendly.com/discovery-call-with-erwin"]')
+assert home.h1.get_text(' ',strip=True)=='SEO Philippines.'
+assert home.select_one('.hero .chart')
+assert 'Illustrative data' in home.get_text()
+assert __import__('hashlib').sha256((ROOT/'source/hero.html').read_text(encoding='utf-8').encode()).hexdigest()=='cdb1988467162e3350245143a4a63a43a32e7a27b7be1291207aaee0c658d822'
+assert 'Example only' in home.main.get_text(' ',strip=True)
+assert home.select_one('.hero-actions a[href$="/contact/"]')
+assert home.select_one('.hero-actions a[href="https://calendly.com/discovery-call-with-erwin"]')
 assert 'for philippine businesses' not in home.get_text(' ',strip=True).lower()
 base=urlsplit(home.select_one('.brand')['href']);prefix=base.path.rstrip('/')
 for file in pages:

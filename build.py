@@ -53,6 +53,8 @@ def page(path,title,description,body,kind='WebPage'):
     if path in ('','results'):
         css=soup.new_tag('link',rel='stylesheet',href=BASE+'/assets/home.css')
         soup.head.append(css)
+    if path=='':
+        soup.head.append(soup.new_tag('link',rel='stylesheet',href=BASE+'/assets/hero.css'))
     for a in soup.select('nav a[href]'):
         if a['href']==BASE+link(path):a['aria-current']='page'
     # New styles and behaviour must not depend on an older browser/CDN cache.

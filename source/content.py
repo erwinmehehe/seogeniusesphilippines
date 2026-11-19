@@ -25,9 +25,9 @@ SERVICES = {
  'intro':'Help people find the services you provide in the places you actually serve. Improve your website’s local information and Google Business Profile.',
  'summary':'Google Business Profile, location pages and consistent business details.',
  'sections':[
- ('Start with accurate business information','Confirm your business name, address or service area, opening hours and contact details. We check for inconsistencies across the website and listings that matter to your business. Locations are included only when you genuinely serve them.'),
+ ('Start with accurate business information','Confirm your business name, address or service area, opening hours and contact details. We check for inconsistencies across the website and listings that matter to your business. The review uses your confirmed locations and service areas.'),
  ('Make location pages useful','A location page should explain the service available there, how customers arrange it and any relevant local details. We avoid producing lists of near-identical city pages with only the place name changed.'),
- ('Review your Google Business Profile','Work can include category recommendations, service information, website links and a plan for maintaining profile accuracy. Profile ownership, eligibility and verification remain with the business; we do not create fake locations or reviews.'),
+ ('Review your Google Business Profile','Work can include category recommendations, service information, website links and a plan for maintaining profile accuracy. Your business retains profile ownership and handles any verification required by Google.'),
  ('Connect local visibility to enquiries','Where the available tools allow it, review website clicks, calls, direction requests and contact submissions. These signals need context: a profile interaction is not automatically a booked customer.')],
  'related':['on-page-seo','seo-content']},
 'ecommerce-seo': {
@@ -38,7 +38,7 @@ SERVICES = {
  ('Organise the store around customer searches','We review how categories, subcategories and products are linked. Search research helps decide where a dedicated category page is useful and where filters already meet the customer’s need.'),
  ('Control duplicate and low-value URLs','Filters, sorting and product variants can create many similar URLs. Technical recommendations address crawling, canonicals and indexing rules based on the platform and the pages you want visible in search.'),
  ('Improve product and category content','Work can cover useful product details, category descriptions, titles, internal links and structured-data checks. Stock, prices, specifications and delivery claims need confirmation from your business.'),
- ('Review commercial performance','Where ecommerce tracking is configured, we can review organic landing pages, product engagement and purchase data. Revenue reporting depends on reliable measurement; we do not infer sales from rankings alone.')],
+ ('Review commercial performance','Where ecommerce tracking is configured, we can review organic landing pages, product engagement and purchase data. Purchase reporting uses recorded ecommerce events, with tracking limitations identified in the report.')],
  'related':['technical-seo','seo-content']},
 'seo-content': {
  'title':'SEO Content Services Philippines | Briefs & Page Updates', 'heading':'SEO content',
@@ -47,7 +47,7 @@ SERVICES = {
  'sections':[
  ('Choose content with a purpose','We begin with your services, customers and existing pages. The content plan identifies what needs an update, what deserves a new page and what would duplicate information already available.'),
  ('Use a brief before writing','A brief defines the audience, page purpose, topics to answer and links to related content. It also identifies facts your team needs to supply, such as product specifications, qualifications or service conditions.'),
- ('Review for accuracy and readability','Drafts use direct language and make the offer clear. Your business reviews factual claims before publication. We avoid invented experience, unsupported superlatives and adding keywords where they make the sentence worse.'),
+ ('Review for accuracy and readability','Draft review checks whether the page answers the intended search, explains the service and uses accurate business information. Your team confirms product details, qualifications and service conditions before publication.'),
  ('Maintain existing pages','Outdated service details and incomplete answers can matter more than publishing another article. Content updates can combine clearer information, better page structure and links that help visitors continue their research.')],
  'related':['on-page-seo','seo-strategy']},
 'seo-strategy': {

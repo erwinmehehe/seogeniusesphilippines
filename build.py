@@ -29,8 +29,8 @@ def opening(heading,intro):
     return f'<section class="page-hero"><div class="container"><h1>{heading}</h1><p>{intro}</p></div></section>'
 def editorial(sections):
     return ''.join(f'<h2>{h}</h2><p>{p}</p>' for h,p in sections)
-def close(heading='Put your next SEO project in writing.'):
-    return '<section class="cta-band"><div class="container"><h2>'+heading+'</h2><p>Share the URL, the audience you want to reach and what needs to change. We will prepare a proposed scope.</p>'+cta()+'</div></section>'
+def close(heading='Request a quote for your website.'):
+    return '<section class="cta-band"><div class="container"><h2>'+heading+'</h2><p>Include your website address, customer market and the SEO work you want help with.</p>'+cta()+'</div></section>'
 
 nav='<a href="/services/">Services</a><a href="/results/">Portfolio</a><a href="/pricing/">Pricing</a><a href="/about/">About</a>'
 brand='<a class="brand" aria-label="SEO Geniuses Philippines home" href="/"><img class="brand-symbol" src="/brand/mark.svg" width="42" height="42" alt=""/><span><span class="brand-name">SEO Geniuses</span><span class="brand-sub">Philippines</span></span></a>'
@@ -55,6 +55,14 @@ def page(path,title,description,body,kind='WebPage'):
         soup.head.append(css)
     if path=='':
         soup.head.append(soup.new_tag('link',rel='stylesheet',href=BASE+'/assets/hero.css'))
+    # Keep the original hero exactly as supplied; improve navigation elsewhere.
+    for anchor in soup.select('a[href]'):
+        if anchor.find_parent(class_='hero'):continue
+        href=anchor['href']
+        if href=='https://calendly.com/discovery-call-with-erwin':
+            anchor['href']=href+'/15min'
+        if href.startswith(BASE+'/contact/') and '#' not in href:
+            anchor['href']=href+'#request-quote'
     for a in soup.select('nav a[href]'):
         if a['href']==BASE+link(path):a['aria-current']='page'
     # New styles and behaviour must not depend on an older browser/CDN cache.
@@ -89,7 +97,7 @@ for slug,data in SERVICES.items():
     body='<main id="main">'+opening(data['heading'],data['intro'])+'<section class="section"><div class="container editorial-layout"><article class="article">'+editorial(data['sections'])+'</article><aside class="sidebar"><div class="side-box"><h3>Discuss this service</h3><p>Send your website and the work you need covered.</p>'+cta(href='/contact/?service='+slug)+'</div><div class="side-box"><h3>Related services</h3>'+related+'</div></aside></div></section>'+close()+'</main>'
     page('services/'+slug,data['title'],data['intro'],body,'Service')
 
-about=[('SEO work you can review','SEO Geniuses Philippines provides technical SEO, on-page improvements, local search, ecommerce SEO, content and reporting. Work is available as a defined project or ongoing support, with the scope agreed for your website.'),('A proposal before implementation','We ask about your services, customers and website before preparing a quote. The proposal identifies the work included, the information and access needed, and tasks that require your developer or approval.'),('Your business keeps control','You retain ownership of your website and business accounts. Access should be granted through named users with suitable permissions. Client information and factual claims need your review before publication.'),('Research follows your audience','A provider’s location does not define your customer base. Project research uses the market and language agreed in the brief. Technical recommendations respond to the website platform and the pages involved.'),('A practical first step','Send your website and the issue you want addressed. If the requirement is a single technical fix or content project, the quote can reflect that rather than assuming you need a monthly plan.')]
+about=[('SEO work you can review','SEO Geniuses Philippines provides technical SEO, on-page improvements, local search, ecommerce SEO, content and reporting. Work is available as a defined project or ongoing support, with the scope agreed for your website.'),('A proposal before implementation','We ask about your services, customers and website before preparing a quote. The proposal identifies the work included, the information and access needed, and tasks that require your developer or approval.'),('Your business keeps control','You retain ownership of your website and business accounts. Access should be granted through named users with suitable permissions. Client information and factual claims need your review before publication.'),('Research follows your audience','We work from the Philippines and research the countries and languages your website targets. Recommendations reflect your platform, existing pages and customer searches.'),('A practical first step','Send your website and the issue you want addressed. If the requirement is a single technical fix or content project, the quote can reflect that rather than assuming you need a monthly plan.')]
 page('about','About SEO Geniuses Philippines','Learn how SEO Geniuses Philippines scopes, delivers and reports on SEO projects for businesses.','<main id="main">'+opening('About SEO Geniuses Philippines','Technical SEO, content and local search support, with the work agreed before it begins.')+'<section class="section"><article class="container policy-copy">'+editorial(about)+'</article></section>'+close()+'</main>')
 
 # Original copy for this brand; existing price amounts are retained.

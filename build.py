@@ -55,6 +55,7 @@ def page(path,title,description,body,kind='WebPage'):
         soup.head.append(css)
     if path=='':
         soup.head.append(soup.new_tag('link',rel='stylesheet',href=BASE+'/assets/hero.css'))
+        soup.head.append(soup.new_tag('link',rel='stylesheet',href=BASE+'/assets/home-redesign.css'))
     # Keep the original hero exactly as supplied; improve navigation elsewhere.
     for anchor in soup.select('a[href]'):
         if anchor.find_parent(class_='hero'):continue
@@ -88,7 +89,27 @@ def portfolio_cards(projects):
     return '<div class="genius-project-grid">'+''.join(cards)+'</div>'
 portfolio_intro='<p class="portfolio-context">Selected websites from our SEO work across Australia and the United States. The figures below are recorded keyword positions, not traffic or revenue claims.</p>'
 portfolio_note='<p class="portfolio-date">Search positions captured on 9 November 2026, using the relevant Australian or US Google results. Rankings are historical observations and can change.</p>'
-home_portfolio='<section class="studio-wrap studio-portfolio" id="portfolio"><div class="studio-heading"><h2>Websites we’ve<br/>worked on.</h2><div>'+portfolio_intro+'<a href="/results/">Explore the portfolio</a></div></div>'+portfolio_cards(PROJECTS)+portfolio_note+'</section>'
+def home_project_browser():
+    cards=BeautifulSoup(portfolio_cards(PROJECTS),'html.parser')
+    grid=cards.select_one('.genius-project-grid')
+    grid['class']=['project-browser']
+    for index,card in enumerate(grid.select('.genius-project')):
+        card['class'].append('featured-project' if index==0 else 'compact-project')
+        details=card.details
+        if index==0:
+            details['open']=''
+        else:
+            summary=details.summary
+            summary.clear()
+            identity=cards.new_tag('div',attrs={'class':'compact-identity'})
+            identity.append(card.h3.extract());identity.append(card.select_one('p').extract())
+            summary.append(identity)
+            toggle=cards.new_tag('span',attrs={'class':'project-toggle','aria-hidden':'true'})
+            toggle.string='+';summary.append(toggle)
+            logo=card.select_one('.genius-project-logo').extract()
+            summary.insert_after(logo)
+    return str(grid)
+home_portfolio='<section class="after-work content-width" id="portfolio"><div class="section-lead"><h2>Search positions<br/>from client projects.</h2><div><p>Browse the websites and keyword positions in our project portfolio.</p><a href="/results/">Open the full portfolio</a></div></div>'+home_project_browser()+portfolio_note+'</section>'
 home=(ROOT/'source/home.html').read_text(encoding='utf-8').replace('{{HERO}}',(ROOT/'source/hero.html').read_text(encoding='utf-8')).replace('{{PORTFOLIO}}',home_portfolio).replace('{{SERVICES}}',service_rows).replace('{{CLOSE}}',close())
 page('', 'SEO Philippines | SEO Geniuses Philippines','SEO Philippines: search strategy, technical diagnosis, content planning and website implementation. Explore SEO expertise from the Philippines and request a quote.',home)
 page('services','SEO Services Philippines','Explore technical, on-page, local and ecommerce SEO, keyword research, content and reporting from the Philippines.','<main id="main" class="inner-design">'+opening('SEO services','Choose the work your website needs, from a focused technical project to ongoing content and search support.')+'<section class="container service-catalog">'+service_rows+'</section>'+close()+'</main>')

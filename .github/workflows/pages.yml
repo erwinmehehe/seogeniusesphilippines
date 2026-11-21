@@ -34,6 +34,10 @@ jobs:
           esac
       - run: python check.py
       - run: python originality.py
+      - name: Publish redirect-only website
+        run: |
+          python build_redirects.py
+          python check_redirects.py
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
